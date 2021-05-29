@@ -19,11 +19,12 @@
     <div class="card">
       <div class="card-body">
 
-        <h1 class="mb-3 text-center">Add Task:</h1>
+     
 
         <div class="input-group mb-3">
+          <h2 class="m-3 text-center">Add Task:</h2>
           <input id="input" type="text" class="form-control" placeholder="Task">
-          <button class="btn btn-secondary" type="button" id="button">Add</button>
+          <button class="btn btn-info" type="button" id="button">Add</button>
         </div>
 
         
@@ -31,12 +32,19 @@
         <div id="no-task"></div>
         <table class="table mt-4">
           <tbody id="table-body">
-            <tr>
-            </tr>
-           
           </tbody>
         </table>
 
+      
+        <h1 class="mb-3 mt-5 text-center">Completed:</h1>
+
+        
+        <div id="no-task"></div>
+        <table class="table mt-4">
+          <tbody id="completed-table-body">
+          </tbody>
+        </table>
+        <button class="btn btn-danger w-1 " type="button" id="clear-button" style="float:right; display:none">Clear</button>
 
       </div>
     </div>
