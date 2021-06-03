@@ -1,95 +1,255 @@
+
 class Task {
-    constructor(task, isComplete) {
-        this.task = task;
-        this.isComplete = isComplete;
+    constructor(id, task, isComplete) {
+      this.id = id;
+      this.name = task;
+      this.isComplete = isComplete;
+    }
+  }
+  
+
+class UI {
+constructor() {
+    this.storage = new Storage();
+    this.table = document.getElementById('table-body');
+    this.completedTable = document.getElementById('completed-table-body');
+    this.taskInput = document.getElementById('input');
+}
+
+async initialize() {
+    this.initializeButtonListener();
+    await this.storage.fetchTasksFromFireStore();
+    await this.storage.fetchCompletedTasksFromFireStore();
+    this.populateTasksTable();
+    this.populateCompletedTasksTable();
+}
+
+initializeButtonListener() {
+    const taskForm = document.getElementById('task-form');
+    taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    this.createTaskFromInput();
+    this.clearFormInputs();
+    });
+}
+
+async createTaskFromInput() {
+    const taskName = this.taskInput.value;
+    const task = new Task(null,taskName, false);
+    await this.storage.addTask(task);
+    this.populateTasksTable();
+}
+
+populateTasksTable() {
+    this.clearTasksTable();
+
+    for (const task of this.storage.tasks) {
+    this.addTaskToTable(task);
+    }
+}
+
+populateCompletedTasksTable() {
+    this.clearCompletedTasksTable();
+    for (const completedTasks of this.storage.completedTasks) {
+        this.addTaskToCompletedTable(completedTasks);
+    }
+}
+
+clearTasksTable() {
+    let length = this.table.children.length;
+    for (let i = 0; i < length; i++) {
+    const row = this.table.children[0];
+    row.remove();
     }
 }
 
 
-const taskInput = document.getElementById('input');
-const button = document.getElementById('button');
-let listStatus = document.getElementById('no-task');
-let tableBody = document.getElementById('table-body');
-let completedTableBody = document.getElementById('completed-table-body');
-const clear = document.getElementById('clear-button');
+clearCompletedTasksTable() {
+    let length = this.completedTable.children.length;
+    for (let i = 0; i < length; i++) {
+    const row = this.completedTable.children[0];
+    row.remove();
+    }
+}
 
-taskInput.addEventListener('keyup', function(event) { //this allows for enter key to be pressed
-    if (event.keyCode === 13) {
-        if (taskInput.value == '') {}
-        else {
-            let task = new Task(taskInput.value, false);
-            addTask(task);
-            taskInput.value = '';
+addTaskToTable(task) {
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+    <td>${this.getCheckBox(task)}</td>
+    <td>${task.name}</td>
+    <td>${this.getRemoveButton(task)}</td>
+    `;
+
+    this.table.append(row);
+    this.addCheckboxToRow(task);
+    this.addRemoveButtonToRow(task);
+}
+
+addTaskToCompletedTable(task) {
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+    <td>${this.getCheckBox(task)}</td>
+    <td>${task.name}</td>
+    <td>${this.getRemoveButton(task)}</td>
+    `;
+
+    this.completedTable.append(row);
+    this.addCheckboxToRow(task);
+    this.addRemoveButtonToRow(task);
+}
+getCheckBox(task) {
+    if (task.isComplete === false) {
+    return `<input width="10%" class="form-check-input" type="checkbox" id="checkbox-${task.id}">`
+    } else {
+    return `<input class="form-check-input" type="checkbox" id="checkbox-${task.id}" checked>`
+    }
+}
+
+getRemoveButton(task) {
+    return `<button type="button" class="btn btn-danger" id="remove-${task.id}" style="float:right">Remove</button>`
+}
+
+addCheckboxToRow(task) {
+    document.getElementById('checkbox-'+task.id).addEventListener('click', async () => {
+    task.isComplete = !task.isComplete;
+    await this.storage.updateTask(task);
+    this.populateTasksTable();
+    this.populateCompletedTasksTable();
+    })
+}
+
+
+addRemoveButtonToRow(task) {
+    document.getElementById('remove-' + task.id).addEventListener('click', async () => {
+    await this.storage.removeTask(task.id);
+    this.populateTasksTable();
+    })
+}
+
+clearFormInputs() {
+    this.taskInput.value = '';
+}
+}
+
+class Storage {
+constructor() {
+    this.db = firebase.firestore();
+    this.tasks = [];
+    this.completedTasks = [];
+}
+
+async fetchTasksFromFireStore() {
+    let tasks = [];
+    try {
+    const snapshot = await this.db.collection('tasks').get();
+    for (let doc of snapshot.docs) {
+        const data = doc.data();
+        const task = new Task(doc.id, data.name, data.isComplete);
+        if (task.isComplete === false) {
+            tasks.push(task);
         }
     }
-});
-button.addEventListener('click', () => {
-    if (taskInput.value == '') {}
-    else {
-        let task = new Task(taskInput.value, false);
-        addTask(task);
-        taskInput.value = '';
+    } catch (err) {
+    console.log(err);
     }
-});
+
+    this.tasks = tasks;
+}
 
 
-function addTask(task) {
-    const row = document.createElement('tr'); //creates the new row in table
-    const checkboxCell = document.createElement('td'); //creates the checkbox cell for row
-    checkboxCell.classList.add('text-center'); //aligns checkbox into center of cell
-    checkboxCell.style='width: 10%'; //makes sure that the cell takes up 10% and will always stay in place
-    let checkBox = document.createElement('input'); //create checkbox 
-    checkBox.className = 'form-check-input';
-    checkBox.type = 'checkbox';
-    checkBox.id = 'flexCheckDefault';
+async fetchCompletedTasksFromFireStore() {
+    let completedTasks = [];
+    try {
+    const snapshot = await this.db.collection('tasks').get();
+    for (let doc of snapshot.docs) {
+        const data = doc.data();
+        const task = new Task(doc.id, data.name, data.isComplete);
+        if (task.isComplete) {
+            completedTasks.push(task);
+        }
+    
+    }
+    } catch (err) {
+    console.log(err);
+    }
 
-    checkboxCell.appendChild(checkBox);
-    const newTask = document.createElement('td'); 
-    newTask.classList.add('text-left'); //aligns task into left of cell
-    newTask.innerHTML = task.task; //shows the new task
-    row.appendChild(checkboxCell); //row will append checkbox then task 
-    row.appendChild(newTask);
-    tableBody.appendChild(row); //table will append row
+    this.completedTasks = completedTasks;
+}
 
-    checkBox.addEventListener('click', () => { //if checkbox is clicked 
-        removeTask(checkBox);
+async addTask(task) {
+    try {
+    const docRef = await this.db.collection('tasks').add({
+        name: task.name,
+        isComplete: task.isComplete,
     });
-
-    function removeTask(checkBox) {
-        task.isComplete = true; //task that is checked off is now complete
-        tableBody.removeChild(row); //remove the row that the task was on
-        clear.style.display = ''; //make clear button appear
-        const completedRow = document.createElement('tr'); //this is creating all of the new row with the checked off task
-        const completedCheckboxCell = document.createElement('td');
-        completedCheckboxCell.classList.add('text-center');
-        completedCheckboxCell.style='width: 10%';
-        let completedCheckBox = document.createElement('input');
-        completedCheckBox.className = 'form-check-input';
-        completedCheckBox.type= 'checkbox';
-        completedCheckBox.id = 'flexCheckChecked';
-        completedCheckBox.checked = 'checked'; //this allows the checkbox to be checked when added to completed section
-
-        completedCheckboxCell.appendChild(completedCheckBox);
-        const newCompletedTask = document.createElement('td');
-        newCompletedTask.classList.add('text-left'); //aligns task into left of cell
-        newCompletedTask.innerHTML = task.task; //shows the new task
-        completedRow.appendChild(completedCheckboxCell); //row will append checkbox then task 
-        completedRow.appendChild(newCompletedTask);
-        completedTableBody.appendChild(completedRow); //table will append row
-
-        completedCheckBox.addEventListener('click', () => { //if checkbox in completed section is clicked 
-            addTask(task); //add task back to to-do section
-            completedTableBody.removeChild(completedRow); //remove row from completed section
-        });
+    task.id = docRef.id;
+    this.tasks.push(task);
+    console.log(task)
+    } catch (err) {
+    console.log(err);
     }
 }
 
-clear.addEventListener('click', () => { //if clear is pressed, loop through all children and remove them
-    while (completedTableBody.firstChild) {
-        completedTableBody.removeChild(completedTableBody.lastChild);
+async updateTask(task) {
+    try {
+    await this.db.collection('tasks').doc(task.id).update({
+        name: task.name,
+        isComplete: task.isComplete,
+    });
+    if (task.isComplete) {
+        this.completedTasks = this.completedTasks.map(x => {
+            return x.id == task.id ? task : x;
+        });
+        this.tasks.pop(task);
+        this.completedTasks.push(task);
+    }else {
+        this.tasks = this.tasks.map(x => {
+            return x.id == task.id ? task : x;
+        });
+        this.tasks.push(task);
+        this.completedTasks.pop(task);
     }
-    clear.style.display = 'none'; //make the clear button hidden after all completed items are cleared
-});
 
+    
+    } catch (err) {
+    console.log(err);
+    }
+}
 
-
+async removeTask(id) {
+    try {
+    const taskID = this.db.collection('tasks').doc(id).id;
+    let taskType = null;
+    for (let tasks of this.tasks) {
+        if (tasks.id == taskID) {
+            taskType = tasks.isComplete;
+        }
+    }
+    for (let tasks of this.completedTasks) {
+        if (tasks.id == taskID) {
+            taskType = tasks.isComplete;
+        }
+    }
+    
+    await this.db.collection('tasks').doc(id).delete();
+    console.log('deted ' + taskType)
+    if (taskType) {
+        this.completedTasks = this.completedTasks.filter(x => x.id != id);
+    }else {
+        this.tasks = this.tasks.filter(x => x.id != id);
+    }
+   
+    } catch(err) {
+    console.log(err);
+    }
+}
+}
+  
+  
+  const ui = new UI();
+  document.addEventListener('DOMContentLoaded', () => {
+    ui.initialize();
+  });
