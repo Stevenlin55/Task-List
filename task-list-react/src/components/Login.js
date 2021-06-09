@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 
 import firebase from '../firebase/firebase';
-
+import './routing.css';
 export default class Login extends Component {
 
   constructor(props) {
@@ -49,14 +49,14 @@ export default class Login extends Component {
   render() {
     return (
 
+      <body>
+      <div className="body pb-5">
+        <div className="container bg-secondary mt-5">
+          <form  onSubmit={(e) => this.login(e)}>
 
-      <div className="">
-        <div className="container bg-info">
-          <form onSubmit={(e) => this.login(e)}>
-
-            <h1 className="h3 mb-3 text-center">Login</h1>
+            <h1 className="h3 text mb-3 text-center">Login</h1>
             <div>
-              <label className="form-label">
+              <label className="form-label text">
                 Email address
               </label>
               <input
@@ -68,7 +68,7 @@ export default class Login extends Component {
             </div>
 
             <div className="mt-4">
-              <label className="form-label">
+              <label className="form-label text">
                 Password
               </label>
               <input
@@ -79,19 +79,20 @@ export default class Login extends Component {
             </div>
 
             <div className="text-center mt-4">
-              <button className="btn btn-primary px-5" type="submit">
+              <button className="btn btn-primary px-5 mb-4" type="submit">
                 Login
               </button>
             </div>
           </form>
           </div>
-        <div className="container bg-info mt-5 text-center">
-          <p>New user? 
-          <Link to="/register"> Create an account</Link>
+        <div className="w-50 d-flex bg-secondary mt-5 pt-3 text-center justify-content-center align-items-center m-auto">
+          <p className="text">New user? {' '}
+          <Link to="/register" className="text">Create an account</Link>
           </p>
          
         </div>
       </div>
+      </body>
     )
   }
 }

@@ -47,14 +47,16 @@ export default class Register extends Component {
 
   render() {
     return (
-      <div className="container">
-        <Link to="/login">Login</Link>
+      
+      <body>
+      <div className="body pb-5"></div>
+      <div className="container bg-secondary">
         <form onSubmit={(e) => this.register(e)}>
 
-          <h1 className="h3 mb-3 text-center">Please Register</h1>
+          <h1 className="h3 text mb-3 text-center">Register</h1>
 
           <div>
-            <label className="form-label">
+            <label className="text form-label">
               Email address
             </label>
             <input
@@ -66,7 +68,7 @@ export default class Register extends Component {
           </div>
 
           <div className="mt-4">
-            <label className="form-label">
+            <label className="text form-label">
               Password
             </label>
             <input
@@ -78,14 +80,15 @@ export default class Register extends Component {
 
 
           <div className="text-center mt-4">
-            <button className="btn btn-primary px-5" type="submit">
+            <button className="btn btn-primary px-5 mb-4" type="submit">
               Register
             </button>
           </div>
-          
+        
         </form>
-
       </div>
+      
+      </body>
     )
   }
 }
