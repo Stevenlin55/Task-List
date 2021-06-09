@@ -23,7 +23,7 @@ export default class TaskTable extends Component {
 
     return (
       <div>   
-        <h1 className="mb-3 mt-5 text-center">To Do:</h1>
+        <h1 className="text mb-3 mt-5 text-center">To Do:</h1>
         <table className="table mt-4">
           <tbody>
             {this.props.tasks.map(task => 

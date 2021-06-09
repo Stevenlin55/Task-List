@@ -19,7 +19,7 @@ export default class CompletedTaskTable extends Component {
 
     return (
       <div>   
-        <h1 className="mb-3 mt-5 text-center">Completed:</h1>
+        <h1 className="text mb-3 mt-5 text-center">Completed:</h1>
         <table className="table mt-4">
           <tbody>
             {this.props.completedTasks.map(completedTask =>
