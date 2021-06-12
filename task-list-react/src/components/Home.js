@@ -28,7 +28,9 @@ export default class Home extends Component {
 
   async fetchTasksFromFirebase() {
     try {
-      const snapshot = await this.db.collection('tasks').get();
+      const userId = this.props.user.uid;
+      const snapshot = await this.db.collection('tasks').where('userId', '==', userId).get();
+      console.log(snapshot)
       const allTasks = snapshot.docs.map(doc => Task.fromFirebaseDoc(doc));
       const incompleteTasks = allTasks.filter(x => x.isComplete === false);
       const completeTasks = allTasks.filter(x => x.isComplete === true);
