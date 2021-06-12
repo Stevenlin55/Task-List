@@ -27,7 +27,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.auth.onAuthStateChanged((user) => {
+      this.auth.onAuthStateChanged((user) => {
       this.setState({ user, loading: false });
     });
   }
@@ -35,6 +35,7 @@ class App extends Component {
   render() {
     const { user, loading } = this.state;
 
+    //header underneath
     return (
       <div>
         {
@@ -42,10 +43,10 @@ class App extends Component {
             <div>Loading</div>
             :
             <BrowserRouter>
+             
               <PropsRoute path="/login" exact component={Login} user={user} />
               <PropsRoute path="/register" exact component={Register} user={user} />
-
-              <GuardedRoute path="/" exact component={Home} user={this.state.user} />
+              <GuardedRoute path="/" exact component={Home} user={user} />
             </BrowserRouter>
         }
       </div>

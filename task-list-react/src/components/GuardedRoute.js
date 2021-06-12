@@ -4,12 +4,12 @@ import { Route, Redirect } from 'react-router-dom';
 export default class GuardedRoute extends Component {
   render() {
 
-    const { component: Component, user, ...rest } = this.props;
+    const { component: Component, user, ...otherProps } = this.props;
 
     return (
-      <Route {...rest} render={(props) => {
+      <Route {...otherProps} render={(routeProps) => {
         if (user) {
-          return <Component {...{ ...props, ...rest.props }} />
+          return <Component {...{ ...routeProps, ...otherProps, user }} />
         } else {
           return <Redirect to="/login" />
         }

@@ -2,9 +2,6 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 export default class CompletedTaskTable extends Component {
 
-  constructor(props) {
-    super(props);
-  }
 
   removeTask(task) {
     this.props.removeTask(task)
@@ -27,7 +24,8 @@ export default class CompletedTaskTable extends Component {
                     <td><input onClick={() => this.updateTask(completedTask)}  width="10%" className="form-check-input" type="checkbox" defaultChecked></input></td>
                     <td className="text-left">{completedTask.name}</td>  
                     <td><button onClick={() => this.removeTask(completedTask)} type="button" className="btn btn-danger">Remove</button></td>    
-                </tr>)}  
+                </tr>
+            )}  
           </tbody>
         </table>
       </div>

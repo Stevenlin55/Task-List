@@ -3,11 +3,6 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 export default class TaskTable extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
-
   removeTask(task) {
     this.props.removeTask(task)
   }
@@ -17,9 +12,6 @@ export default class TaskTable extends Component {
     this.props.updateTask(task);
   }
   render() {
-
-    // TODO: read tasks from props here and add them to the html
-    // NOTE. don't worry about edit and delete for homework
 
     return (
       <div>   
