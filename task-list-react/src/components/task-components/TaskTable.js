@@ -3,11 +3,6 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 export default class TaskTable extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
-
   removeTask(task) {
     this.props.removeTask(task)
   }
@@ -18,12 +13,9 @@ export default class TaskTable extends Component {
   }
   render() {
 
-    // TODO: read tasks from props here and add them to the html
-    // NOTE. don't worry about edit and delete for homework
-
     return (
       <div>   
-        <h1 className="mb-3 mt-5 text-center">To Do:</h1>
+        <h1 className="text mb-3 mt-5 text-center">To Do:</h1>
         <table className="table mt-4">
           <tbody>
             {this.props.tasks.map(task => 

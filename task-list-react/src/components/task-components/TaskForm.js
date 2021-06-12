@@ -30,7 +30,7 @@ export default class TaskForm extends Component {
       <div className="task-form">
         <form onSubmit={(e) => this.addTask(e)}>
           <div className="input-group mb-3">
-              <h2 class="m-3 text-center">Add Task:</h2>
+              <h2 className="text m-3 text-center">Add Task:</h2>
             <input onChange={(e) => this.onNameChanged(e)} value={this.state.name} type="text" className="form-control" placeholder="Task" />
             <button className="btn btn-info" type="submit">
               +
